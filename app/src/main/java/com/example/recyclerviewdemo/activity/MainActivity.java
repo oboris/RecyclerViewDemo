@@ -46,34 +46,35 @@ public class MainActivity extends AppCompatActivity {
 
 //        new Loader().execute();
 
-//        new Thread(() -> {
-//            List<CompositePerson> compositePersons = ApiPersonService.get().getPersons(null);
-//            for (CompositePerson compositePerson : compositePersons) {
-//                persons.add(compositePerson.toIPerson());
+        new Thread(() -> {
+            List<CompositePerson> compositePersons = ApiPersonService.get().getPersons(null);
+            for (CompositePerson compositePerson : compositePersons) {
+                persons.add(compositePerson.toIPerson());
+            }
+            runOnUiThread(() -> recyclerView.getAdapter().notifyDataSetChanged());
+        }).start();
+
+
+//        ApiPersonService.get().getPersons(new Callback<List<CompositePerson>>() {
+//            @Override
+//            public void onResponse(Call<List<CompositePerson>> call, Response<List<CompositePerson>> response) {
+//                Log.e("response","good!!!!!");
+//                if (response.isSuccessful()){
+//                    if (response.body() != null) {
+//                        for (CompositePerson compositePerson : response.body()) {
+//                            persons.add(compositePerson.toIPerson());
+//                        }
+//                    }
+//                    recyclerView.getAdapter().notifyDataSetChanged();
+//                }
 //            }
-//        }).start();
-
-
-        ApiPersonService.get().getPersons(new Callback<List<CompositePerson>>() {
-            @Override
-            public void onResponse(Call<List<CompositePerson>> call, Response<List<CompositePerson>> response) {
-                Log.e("response","good!!!!!");
-                if (response.isSuccessful()){
-                    if (response.body() != null) {
-                        for (CompositePerson compositePerson : response.body()) {
-                            persons.add(compositePerson.toIPerson());
-                        }
-                    }
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<CompositePerson>> call, Throwable t) {
-                Log.e("response",t.getMessage());
-                t.printStackTrace();
-            }
-        });
+//
+//            @Override
+//            public void onFailure(Call<List<CompositePerson>> call, Throwable t) {
+//                Log.e("response",t.getMessage());
+//                t.printStackTrace();
+//            }
+//        });
 
 //        persons.add(new Person("name1", "112233"));
 //        persons.add(new Person("name2", "445566"));
