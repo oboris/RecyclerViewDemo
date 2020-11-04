@@ -9,7 +9,8 @@ public class PersonDataBaseHelper {
 
     public static PersonDataBase getDB(Context context){
         if (instance == null){
-            instance = Room.databaseBuilder(context, PersonDataBase.class, "person_database").build();
+            instance = Room.databaseBuilder(context, PersonDataBase.class, "person_database")
+                    .fallbackToDestructiveMigration().build();
         }
         return instance;
     }
