@@ -1,26 +1,30 @@
 package com.example.recyclerviewdemo.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
-@Entity(tableName = "person_phones")
+import org.jetbrains.annotations.NotNull;
+
+@Entity(tableName = "person_phones", primaryKeys = {"name", "phone"})
 public class PersonPhone implements IPerson {
-    private String name;
-    private String phone;
+    @NonNull
+    private final String name;
+    @NonNull
+    private final String phone;
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+//    @PrimaryKey(autoGenerate = true)
+//    public int id;
 
-    public PersonPhone(String name, String phone) {
+    public PersonPhone(@NotNull String name, @NotNull String phone) {
         this.name = name;
         this.phone = phone;
     }
 
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
 
-    public String getPhone() {
+    public @NotNull String getPhone() {
         return phone;
     }
 
