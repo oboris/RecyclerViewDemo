@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">RecyclerViewDemo</string>
-    <string name="refresh">Refresh</string>
+    <string name="app_name">Recycler View Demo</string>
+    <string name="clear_list">Clear List</string>
+    <string name="read_from_db">Read from DB</string>
 </resources>
