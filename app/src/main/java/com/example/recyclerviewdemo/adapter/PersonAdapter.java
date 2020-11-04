@@ -63,8 +63,8 @@ public class PersonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public static class PersonHolder extends RecyclerView.ViewHolder {
-        private TextView tvName;
-        private TextView tvPhone;
+        private final TextView tvName;
+        private final TextView tvPhone;
         public PersonHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
@@ -73,8 +73,8 @@ public class PersonAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public static class PersonAddressHolder extends RecyclerView.ViewHolder {
-        private TextView tvName;
-        private TextView tvAddress;
+        private final TextView tvName;
+        private final TextView tvAddress;
         public PersonAddressHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
