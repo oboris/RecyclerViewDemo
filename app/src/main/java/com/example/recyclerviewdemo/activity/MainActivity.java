@@ -1,26 +1,24 @@
 package com.example.recyclerviewdemo.activity;
 
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.widget.Button;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
-
-import com.example.recyclerviewdemo.adapter.PersonAdapter;
 import com.example.recyclerviewdemo.R;
+import com.example.recyclerviewdemo.adapter.PersonAdapter;
 import com.example.recyclerviewdemo.api.ApiPersonService;
+import com.example.recyclerviewdemo.database.PersonDataBaseHelper;
 import com.example.recyclerviewdemo.model.CompositePerson;
 import com.example.recyclerviewdemo.model.IPerson;
+import com.example.recyclerviewdemo.model.PersonAddress;
+import com.example.recyclerviewdemo.model.PersonPhone;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -51,8 +49,24 @@ public class MainActivity extends AppCompatActivity {
             for (CompositePerson compositePerson : compositePersons) {
                 persons.add(compositePerson.toIPerson());
             }
+
+            for (IPerson iPerson : persons){
+                switch (iPerson.getType()){
+                    case 1:
+                        PersonDataBaseHelper.getDB(getApplicationContext()).personDAO().insertPersonPhone((PersonPhone)iPerson);
+                        break;
+                    case 2:
+                        PersonDataBaseHelper.getDB(getApplicationContext()).personDAO().insertPersonAddress((PersonAddress) iPerson);
+                        break;
+                }
+            }
+
             runOnUiThread(() -> recyclerView.getAdapter().notifyDataSetChanged());
         }).start();
+
+
+
+
 
 
 //        ApiPersonService.get().getPersons(new Callback<List<CompositePerson>>() {
