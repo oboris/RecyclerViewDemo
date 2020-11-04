@@ -1,6 +1,5 @@
 package com.example.recyclerviewdemo.activity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
 
@@ -11,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.recyclerviewdemo.R;
 import com.example.recyclerviewdemo.adapter.PersonAdapter;
 import com.example.recyclerviewdemo.api.ApiPersonService;
-import com.example.recyclerviewdemo.database.PersonDataBaseHelper;
+import com.example.recyclerviewdemo.database.PersonDataBase;
 import com.example.recyclerviewdemo.model.CompositePerson;
 import com.example.recyclerviewdemo.model.IPerson;
 import com.example.recyclerviewdemo.model.PersonAddress;
@@ -30,8 +29,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        Button button = findViewById(R.id.btnRefresh);
-        button.setOnClickListener(view -> recyclerView.getAdapter().notifyDataSetChanged());
+        Button btnClear = findViewById(R.id.btnClearList);
+        btnClear.setOnClickListener(view -> {
+            persons.clear();
+            recyclerView.getAdapter().notifyDataSetChanged();
+        });
+
+        Button btnRead = findViewById(R.id.btnReadFromDB);
+        btnRead.setOnClickListener(view -> new Thread(() -> {
+            List<PersonAddress> personAddresses = PersonDataBase.getDB(getApplicationContext()).personDAO().getPersonAddressFromBD();
+            persons.addAll(personAddresses);
+            List<PersonPhone> personPhones = PersonDataBase.getDB(getApplicationContext()).personDAO().getPersonPhoneFromBD();
+            persons.addAll(personPhones);
+
+            runOnUiThread(() -> recyclerView.getAdapter().notifyDataSetChanged());
+        }).start());
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -41,33 +53,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void intData() {
-
-//        new Loader().execute();
-
         new Thread(() -> {
             List<CompositePerson> compositePersons = ApiPersonService.get().getPersons(null);
             for (CompositePerson compositePerson : compositePersons) {
                 persons.add(compositePerson.toIPerson());
             }
 
+//            PersonDataBase.getDB(getApplicationContext()).clearAllTables();
             for (IPerson iPerson : persons){
                 switch (iPerson.getType()){
                     case 1:
-                        PersonDataBaseHelper.getDB(getApplicationContext()).personDAO().insertPersonPhone((PersonPhone)iPerson);
+                        PersonDataBase.getDB(getApplicationContext()).personDAO().insertPersonPhone((PersonPhone)iPerson);
                         break;
                     case 2:
-                        PersonDataBaseHelper.getDB(getApplicationContext()).personDAO().insertPersonAddress((PersonAddress) iPerson);
+                        PersonDataBase.getDB(getApplicationContext()).personDAO().insertPersonAddress((PersonAddress) iPerson);
                         break;
                 }
             }
 
             runOnUiThread(() -> recyclerView.getAdapter().notifyDataSetChanged());
         }).start();
-
-
-
-
-
 
 //        ApiPersonService.get().getPersons(new Callback<List<CompositePerson>>() {
 //            @Override
@@ -97,23 +102,5 @@ public class MainActivity extends AppCompatActivity {
 //        persons.add(new Person("name4", "00reg3uy"));
 //        persons.add(new Person("name5", "dsfgjdsf3"));
 //        persons.add(new PersonAddress("kjfjd", "dfdfd"));
-    }
-
-    private class Loader extends  AsyncTask <Void, Void, Void>{
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            List<CompositePerson> compositePersons = ApiPersonService.get().getPersons(null);
-            for (CompositePerson compositePerson : compositePersons) {
-                persons.add(compositePerson.toIPerson());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            recyclerView.getAdapter().notifyDataSetChanged();
-        }
     }
 }
